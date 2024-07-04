@@ -1,0 +1,152 @@
+body {
+    background-color: #181319;
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
+    justify-content: center;
+    align-items: center;
+    height: 95vh;
+}
+
+.metronome {
+    border: 1px solid #9a9299;
+    border-radius: .3em;
+    background-color: #000000;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.counter {
+    margin: 10px;
+    width: 5em;
+    height: 5em;
+    background-color: #39512c;
+    border-radius: 100%;
+}
+
+.soundboard {
+    border: 1px solid #9a9299;
+    border-radius: .3em;
+    background-color: #000000;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    gap: 1em;
+    align-items: center;
+    position: relative;
+}
+
+.column button {
+    border: 2px solid black;
+    border-radius: 0%;
+    width: 6em;
+    height: 6em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.column button::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: calc(50% + 2px);
+    background: #878188;
+    /* Line color */
+    top: calc(100% + 2px);
+    /* Start at the bottom of the button */
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.column button:last-child::before {
+    display: none;
+    /* Hide bottom line for the last button */
+}
+
+.glow {
+    transition: .15s ease-in-out;
+}
+
+/* Apply specific box-shadow for each class when the glow class is also present */
+.drums.glow {
+    background: radial-gradient(circle, rgba(255, 211, 255, 1) 0%, rgba(255, 166, 255, 1) 100%);
+    border-color: #ffa6ff !important;
+    box-shadow: rgba(253, 128, 197, 1) 0 0 20px 5px;
+}
+
+.fx.glow {
+    background: radial-gradient(circle, rgba(242, 216, 255, 1) 0%, rgba(224, 143, 255, 1) 100%);
+    border-color: #e08fff !important;
+    box-shadow: rgba(168, 120, 255, 1) 0 0 20px 5px;
+}
+
+.bass.glow {
+    background: radial-gradient(circle, rgba(217, 255, 208, 1) 0%, rgba(180, 255, 157, 1) 100%);
+    border-color: #b4ff9d !important;
+    box-shadow: rgba(139, 236, 84, 1) 0 0 20px 5px;
+}
+
+.goatsoul.glow {
+    background: radial-gradient(circle, rgba(255, 240, 169, 1) 0%, rgba(255, 216, 70, 1) 100%);
+    border-color: #ffd846 !important;
+    box-shadow: rgba(255, 201, 108, 1) 0 0 20px 5px;
+}
+
+.melody.glow {
+    background: radial-gradient(circle, rgba(166, 255, 255, 1) 0%, rgba(91, 229, 255, 1) 100%);
+    border-color: #5be5ff !important;
+    box-shadow: rgba(76, 189, 255, 1) 0 0 20px 5px;
+}
+
+.drums {
+    border-color: #66395f !important;
+    background: radial-gradient(circle, rgba(123, 50, 104, 1) 0%, rgba(106, 34, 88, 1) 100%);
+}
+
+.fx {
+    border-color: #7448ab !important;
+    background: radial-gradient(circle, rgba(130, 75, 203, 1) 0%, rgba(104, 44, 174, 1) 100%);
+}
+
+.bass {
+    border-color: #45543f !important;
+    background: radial-gradient(circle, rgba(76, 100, 62, 1) 0%, rgba(55, 91, 40, 1) 100%);
+}
+
+.goatsoul {
+    border-color: #766655 !important;
+    background: radial-gradient(circle, rgba(142, 115, 97, 1) 0%, rgba(105, 81, 62, 1) 100%);
+}
+
+.melody {
+    border-color: #365972 !important;
+    background: radial-gradient(circle, rgba(52, 104, 134, 1) 0%, rgba(25, 78, 117, 1) 100%);
+}
+
+.column p {
+    font-weight: bold;
+}
+
+.arrows {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+}
+
+.arrows p {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: white;
+}
