@@ -18,11 +18,19 @@ body {
 }
 
 .counter {
+    border: 2px solid #28381e;
+    box-sizing: border-box;
     margin: 10px;
     width: 5em;
     height: 5em;
     background-color: #39512c;
     border-radius: 100%;
+}
+
+.counter.active {
+    border: 2px solid #97f85d;
+    background-color: #d8ff8e;
+    box-shadow: rgba(151, 248, 93, 1) 0 0 20px 0px;
 }
 
 .soundboard {
@@ -54,6 +62,7 @@ body {
     justify-content: center;
     position: relative;
 }
+
 
 .column button::before {
     content: '';
