@@ -19,6 +19,7 @@ const buttonMapping = [
 ];
 
 let audioContext;
+let buttonsLoaded = false;
 const audioBuffers = {};
 const shortAudio = [
     14, 15, 16, 17, 18, 22, 23, 24, 25, 26, 27, 28, 32, 34, 37, 38, 41, 44, 45, 46, 48, 57,
@@ -30,6 +31,7 @@ const loadAudioFile = async (url) => {
     return audioContext.decodeAudioData(arrayBuffer);
 };
 
+
 const loadAllAudioFiles = async () => {
     for (let i = 1; i <= 8; i++) {
         for (let j = 1; j <= 8; j++) {
@@ -37,6 +39,12 @@ const loadAllAudioFiles = async () => {
             audioBuffers[audioKey] = await loadAudioFile(`./audio/${audioKey}.ogg`);
         }
     }
+    // Enable buttons after audio files are loaded
+    document.querySelectorAll('button').forEach(button => {
+        button.disabled = false;
+    });
+    document.getElementById('loadingScreen').classList.add('hidden');
+    buttonsLoaded = true;
 };
 
 const initializeAudioContext = async () => {
@@ -47,7 +55,7 @@ const initializeAudioContext = async () => {
 };
 
 let columnCount = 1;
-const soundboard = document.querySelector(".soundboard");
+const soundboard = document.querySelector(".buttonArea");
 buttonMapping.forEach((element) => {
     const column = document.createElement("div");
     column.classList.add("column");
@@ -55,6 +63,7 @@ buttonMapping.forEach((element) => {
     let buttonCount = 1;
     element.forEach((button) => {
         const buttonElement = document.createElement("button");
+        buttonElement.disabled = true;
         buttonElement.addEventListener("click", async () => {
             await initializeAudioContext();
             soundboardButtonClicked(buttonElement);
@@ -112,6 +121,7 @@ function soundboardButtonClicked(button) {
 
 let interval = 0;
 setInterval(() => {
+    if (!buttonsLoaded) return;
     const activeButtons = document.querySelectorAll('.counter.active');
     if (activeButtons.length < 8) {
         const lastButton = activeButtons[activeButtons.length - 1];
@@ -140,12 +150,8 @@ setInterval(() => {
 
                     // Playing the audio
                     if (interval === 1 && shortAudio.includes(parseInt(`${parentClassesNumber}${buttonClassesNumber}`))) {
-                        // var audio = new Audio(`./audio/${parentClassesNumber}${buttonClassesNumber}.ogg`);
-                        // audio.play();
                         audiosToPlay.push(audioBuffers[`${parentClassesNumber}${buttonClassesNumber}`]);
                     } else if (interval === 0) {
-                        // var audio = new Audio(`./audio/${parentClassesNumber}${buttonClassesNumber}.ogg`);
-                        // audio.play();
                         audiosToPlay.push(audioBuffers[`${parentClassesNumber}${buttonClassesNumber}`]);
                     }
                 });
@@ -169,3 +175,38 @@ setInterval(() => {
         firstButton.classList.add('active');
     }
 }, 860); // Technically it needs to be every 869.6ms but 860 will give the audio a bit of time to load
+
+const updateSizes = () => {
+    const root = document.documentElement;
+    const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
+    const minViewportDimension = Math.min(viewportHeight, viewportWidth);
+
+    const buttonSize = `calc(6em * (${minViewportDimension} / 1080))`;
+    const counterSize = `calc(5em * (${minViewportDimension} / 1080))`;
+    root.style.setProperty('--button-size', buttonSize);
+    root.style.setProperty('--counter-size', counterSize);
+
+    const soundboard = document.querySelector('.buttonArea');
+    if (soundboard) {
+        const soundboardWidth = soundboard.offsetWidth;
+
+        const counter = document.querySelector('.counter');
+        if (counter) {
+            const counterWidth = counter.offsetWidth;
+            const counterMargin = `calc((${soundboardWidth}px - ${counterWidth * 8}px) / 16)`;
+            root.style.setProperty('--counter-margin', counterMargin);
+            root.style.setProperty('--metronome-width', `${soundboardWidth}px`);
+        }
+    }
+};
+
+// Update sizes on window resize
+window.addEventListener('resize', updateSizes);
+window.addEventListener('fullscreenchange', updateSizes);
+
+// Initialize sizes on page load
+window.addEventListener('load', () => {
+    initializeAudioContext();
+    updateSizes();
+});

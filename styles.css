@@ -1,30 +1,49 @@
+:root {
+    --button-size: calc(6em * (min(90vh, 90vw) / 1080));
+    --counter-size: calc(5em * (min(90vh, 90vw) / 1080));
+    --counter-margin: auto;
+    --metronome-width: calc(20em * (min(90vh, 90vw) / 1080));
+}
+
 body {
     background-color: #181319;
     display: flex;
-    flex-direction: column;
-    gap: .5em;
     justify-content: center;
     align-items: center;
-    height: 95vh;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1em;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-items: center;
 }
 
 .metronome {
+    width: var(--metronome-width);
     border: 1px solid #9a9299;
     border-radius: .3em;
     background-color: #000000;
     display: flex;
     flex-direction: row;
+    justify-content: center;
     align-items: center;
 }
 
 .counter {
+    width: var(--counter-size);
+    height: var(--counter-size);
+    border-radius: 50%;
+    background-color: #39512c;
     border: 2px solid #28381e;
     box-sizing: border-box;
-    margin: 10px;
-    width: 5em;
-    height: 5em;
-    background-color: #39512c;
-    border-radius: 100%;
+    margin: var(--counter-margin);
 }
 
 .counter.active {
@@ -37,6 +56,9 @@ body {
     border: 1px solid #9a9299;
     border-radius: .3em;
     background-color: #000000;
+}
+
+.buttonArea {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -63,6 +85,11 @@ body {
     position: relative;
 }
 
+.buttonArea .column button {
+    width: var(--button-size);
+    height: var(--button-size);
+}
+
 
 .column button::before {
     content: '';
@@ -82,11 +109,14 @@ body {
     /* Hide bottom line for the last button */
 }
 
+.column button:disabled {
+    color: black;
+}
+
 .glow {
     transition: .15s ease-in-out;
 }
 
-/* Apply specific box-shadow for each class when the glow class is also present */
 .drums.glow {
     background: radial-gradient(circle, rgba(255, 211, 255, 1) 0%, rgba(255, 166, 255, 1) 100%);
     border-color: #ffa6ff !important;
@@ -158,4 +188,28 @@ body {
     font-size: 1.5em;
     font-weight: bold;
     color: white;
+}
+
+.title {
+    height: 1.5em;
+    margin: 10px;
+}
+
+#loadingScreen {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    z-index: 1000;
+}
+
+.hidden {
+    display: none !important;
 }
