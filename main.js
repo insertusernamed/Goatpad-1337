@@ -8,205 +8,223 @@
 
 */
 const buttonMapping = [
-    [1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 2],
-    [3, 3, 3, 3, 3, 4, 5, 2],
-    [5, 5, 5, 5, 5, 5, 5, 5],
-    [5, 5, 4, 4, 4, 4, 5, 4],
-    [4, 2, 4, 5, 2, 5, 5, 5],
-    [5, 4, 4, 4, 4, 4, 5, 5],
+  [1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 1, 1, 1, 1, 1, 1, 2],
+  [3, 3, 3, 3, 3, 4, 5, 2],
+  [5, 5, 5, 5, 5, 5, 5, 5],
+  [5, 5, 4, 4, 4, 4, 5, 4],
+  [4, 2, 4, 5, 2, 5, 5, 5],
+  [5, 4, 4, 4, 4, 4, 5, 5],
 ];
 
 let audioContext;
 let buttonsLoaded = false;
 const audioBuffers = {};
 const shortAudio = [
-    14, 15, 16, 17, 18, 22, 23, 24, 25, 26, 27, 28, 32, 34, 37, 38, 41, 44, 45, 46, 48, 57,
-    64, 67, 71, 72, 74, 75, 77, 87, 88
+  14, 15, 16, 17, 18, 22, 23, 24, 25, 26, 27, 28, 32, 34, 37, 38, 41, 44, 45,
+  46, 48, 57, 64, 67, 71, 72, 74, 75, 77, 87, 88,
 ];
 const loadAudioFile = async (url) => {
-    const response = await fetch(url);
-    const arrayBuffer = await response.arrayBuffer();
-    return audioContext.decodeAudioData(arrayBuffer);
+  const response = await fetch(url);
+  const arrayBuffer = await response.arrayBuffer();
+  return audioContext.decodeAudioData(arrayBuffer);
 };
 
-
 const loadAllAudioFiles = async () => {
-    for (let i = 1; i <= 8; i++) {
-        for (let j = 1; j <= 8; j++) {
-            const audioKey = `${i}${j}`;
-            audioBuffers[audioKey] = await loadAudioFile(`./audio/${audioKey}.ogg`);
-        }
+  for (let i = 1; i <= 8; i++) {
+    for (let j = 1; j <= 8; j++) {
+      const audioKey = `${i}${j}`;
+      audioBuffers[audioKey] = await loadAudioFile(`./audio/${audioKey}.ogg`);
     }
-    // Enable buttons after audio files are loaded
-    document.querySelectorAll('button').forEach(button => {
-        button.disabled = false;
-    });
-    document.getElementById('loadingScreen').classList.add('hidden');
-    buttonsLoaded = true;
+  }
+  // Enable buttons after audio files are loaded
+  document.querySelectorAll("button").forEach((button) => {
+    button.disabled = false;
+  });
+  document.getElementById("loadingScreen").classList.add("hidden");
+  buttonsLoaded = true;
+  nextBeatTime = audioContext.currentTime;
+  beatLoop();
 };
 
 const initializeAudioContext = async () => {
-    if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        await loadAllAudioFiles();
-    }
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    await loadAllAudioFiles();
+  }
 };
 
 let columnCount = 1;
 const soundboard = document.querySelector(".buttonArea");
 buttonMapping.forEach((element) => {
-    const column = document.createElement("div");
-    column.classList.add("column");
-    column.classList.add(columnCount);
-    let buttonCount = 1;
-    element.forEach((button) => {
-        const buttonElement = document.createElement("button");
-        buttonElement.disabled = true;
-        buttonElement.addEventListener("click", async () => {
-            await initializeAudioContext();
-            soundboardButtonClicked(buttonElement);
-        });
-        const p = document.createElement("p");
-
-        if (button === 1) {
-            p.innerText = "DRUMS";
-            buttonElement.classList.add("drums");
-        } else if (button === 2) {
-            p.innerText = "FX";
-            buttonElement.classList.add("fx");
-        } else if (button === 3) {
-            p.innerText = "BASS";
-            buttonElement.classList.add("bass");
-        } else if (button === 4) {
-            p.innerText = "GOAT SOUL";
-            buttonElement.classList.add("goatsoul");
-        } else if (button === 5) {
-            p.innerText = "MELODY";
-            buttonElement.classList.add("melody");
-        }
-
-        buttonElement.classList.add(buttonCount);
-        buttonCount++;
-        buttonElement.appendChild(p);
-        column.appendChild(buttonElement);
+  const column = document.createElement("div");
+  column.classList.add("column");
+  column.classList.add(columnCount);
+  let buttonCount = 1;
+  element.forEach((button) => {
+    const buttonElement = document.createElement("button");
+    buttonElement.disabled = true;
+    buttonElement.addEventListener("click", async () => {
+      await initializeAudioContext();
+      soundboardButtonClicked(buttonElement);
     });
-    soundboard.appendChild(column);
-    columnCount++;
+    const p = document.createElement("p");
+
+    if (button === 1) {
+      p.innerText = "DRUMS";
+      buttonElement.classList.add("drums");
+    } else if (button === 2) {
+      p.innerText = "FX";
+      buttonElement.classList.add("fx");
+    } else if (button === 3) {
+      p.innerText = "BASS";
+      buttonElement.classList.add("bass");
+    } else if (button === 4) {
+      p.innerText = "GOAT SOUL";
+      buttonElement.classList.add("goatsoul");
+    } else if (button === 5) {
+      p.innerText = "MELODY";
+      buttonElement.classList.add("melody");
+    }
+
+    buttonElement.classList.add(buttonCount);
+    buttonCount++;
+    buttonElement.appendChild(p);
+    column.appendChild(buttonElement);
+  });
+  soundboard.appendChild(column);
+  columnCount++;
 });
 
 function soundboardButtonClicked(button) {
-    // If the button is already active, remove the active class and return
-    if (button.classList.contains("active")) {
-        button.classList.remove("active");
-        button.classList.remove("glow");
-        return;
-    }
-    // Get the parent column of the clicked button
-    const column = button.parentElement;
+  // If the button is already active, remove the active class and return
+  if (button.classList.contains("active")) {
+    button.classList.remove("active");
+    button.classList.remove("glow");
+    return;
+  }
+  // Get the parent column of the clicked button
+  const column = button.parentElement;
 
-    // Loop through all buttons in the column
-    const buttons = column.querySelectorAll("button");
-    buttons.forEach((btn) => {
-        // Remove the active class from each button
-        btn.classList.remove("glow");
-        btn.classList.remove("active");
-    });
+  // Loop through all buttons in the column
+  const buttons = column.querySelectorAll("button");
+  buttons.forEach((btn) => {
+    // Remove the active class from each button
+    btn.classList.remove("glow");
+    btn.classList.remove("active");
+  });
 
-    // Add the active class to the clicked button
-    button.classList.add("active");
-    button.classList.add("glow");
+  // Add the active class to the clicked button
+  button.classList.add("active");
+  button.classList.add("glow");
 }
 
 let interval = 0;
-setInterval(() => {
-    if (!buttonsLoaded) return;
-    const activeButtons = document.querySelectorAll('.counter.active');
-    if (activeButtons.length < 8) {
-        const lastButton = activeButtons[activeButtons.length - 1];
-        const nextButton = lastButton.nextElementSibling;
-        nextButton.classList.add('active');
-    } else {
-        // Play audio if any button is active
-        const activeSoundButtons = document.querySelectorAll('button.active');
-        if (activeSoundButtons.length === 0) {
-            interval = 0;
-        } else if (activeSoundButtons.length != 0) {
-            if (interval === 2) {
-                interval = 0
-            }
-            if (interval < 2) {
-                const audiosToPlay = [];
-                activeSoundButtons.forEach(button => {
-                    // Getting the number of the parent column
-                    const parent = button.parentElement;
-                    const parentClasses = parent.classList;
-                    const parentClassesNumber = Array.from(parentClasses)[1];
+let nextBeatTime = 0;
+const BEAT_INTERVAL = 60000 / 69;
 
-                    // Getting the number of the button
-                    const buttonClasses = button.classList;
-                    const buttonClassesNumber = Array.from(buttonClasses)[1];
+function beatLoop() {
+  if (!buttonsLoaded) {
+    setTimeout(beatLoop, BEAT_INTERVAL);
+    return;
+  }
+  const activeButtons = document.querySelectorAll(".counter.active");
+  if (activeButtons.length < 8) {
+    const lastButton = activeButtons[activeButtons.length - 1];
+    const nextButton = lastButton.nextElementSibling;
+    nextButton.classList.add("active");
+  } else {
+    const activeSoundButtons = document.querySelectorAll("button.active");
+    if (activeSoundButtons.length === 0) {
+      interval = 0;
+    } else if (activeSoundButtons.length != 0) {
+      if (interval === 2) {
+        interval = 0;
+      }
+      if (interval < 2) {
+        const audiosToPlay = [];
+        activeSoundButtons.forEach((button) => {
+          const parent = button.parentElement;
+          const parentClasses = parent.classList;
+          const parentClassesNumber = Array.from(parentClasses)[1];
 
-                    // Playing the audio
-                    if (interval === 1 && shortAudio.includes(parseInt(`${parentClassesNumber}${buttonClassesNumber}`))) {
-                        audiosToPlay.push(audioBuffers[`${parentClassesNumber}${buttonClassesNumber}`]);
-                    } else if (interval === 0) {
-                        audiosToPlay.push(audioBuffers[`${parentClassesNumber}${buttonClassesNumber}`]);
-                    }
-                });
-                audiosToPlay.forEach(buffer => {
-                    const source = audioContext.createBufferSource();
-                    source.buffer = buffer;
-                    source.connect(audioContext.destination);
-                    source.start(0);
-                });
-                interval++;
-            } else {
-                interval++;
-            }
-        }
+          const buttonClasses = button.classList;
+          const buttonClassesNumber = Array.from(buttonClasses)[1];
 
-        // Make the first counter active
-        activeButtons.forEach(button => {
-            button.classList.remove('active');
+          if (
+            interval === 1 &&
+            shortAudio.includes(
+              parseInt(`${parentClassesNumber}${buttonClassesNumber}`),
+            )
+          ) {
+            audiosToPlay.push(
+              audioBuffers[`${parentClassesNumber}${buttonClassesNumber}`],
+            );
+          } else if (interval === 0) {
+            audiosToPlay.push(
+              audioBuffers[`${parentClassesNumber}${buttonClassesNumber}`],
+            );
+          }
         });
-        const firstButton = document.querySelector('.counter');
-        firstButton.classList.add('active');
+        audiosToPlay.forEach((buffer) => {
+          const source = audioContext.createBufferSource();
+          source.buffer = buffer;
+          source.connect(audioContext.destination);
+          source.start(0);
+        });
+        interval++;
+      } else {
+        interval++;
+      }
     }
-}, 860); // Technically it needs to be every 869.6ms but 860 will give the audio a bit of time to load
+
+    activeButtons.forEach((button) => {
+      button.classList.remove("active");
+    });
+    const firstButton = document.querySelector(".counter");
+    firstButton.classList.add("active");
+  }
+
+  if (nextBeatTime === 0) {
+    nextBeatTime = audioContext.currentTime;
+  }
+  nextBeatTime += BEAT_INTERVAL / 1000;
+  const delay = Math.max(0, (nextBeatTime - audioContext.currentTime) * 1000);
+  setTimeout(beatLoop, delay);
+}
 
 const updateSizes = () => {
-    const root = document.documentElement;
-    const viewportHeight = window.innerHeight;
-    const viewportWidth = window.innerWidth;
-    const minViewportDimension = Math.min(viewportHeight, viewportWidth);
+  const root = document.documentElement;
+  const viewportHeight = window.innerHeight;
+  const viewportWidth = window.innerWidth;
+  const minViewportDimension = Math.min(viewportHeight, viewportWidth);
 
-    const buttonSize = `calc(6em * (${minViewportDimension} / 1080))`;
-    const counterSize = `calc(5em * (${minViewportDimension} / 1080))`;
-    root.style.setProperty('--button-size', buttonSize);
-    root.style.setProperty('--counter-size', counterSize);
+  const buttonSize = `calc(6em * (${minViewportDimension} / 1080))`;
+  const counterSize = `calc(5em * (${minViewportDimension} / 1080))`;
+  root.style.setProperty("--button-size", buttonSize);
+  root.style.setProperty("--counter-size", counterSize);
 
-    const soundboard = document.querySelector('.buttonArea');
-    if (soundboard) {
-        const soundboardWidth = soundboard.offsetWidth;
+  const soundboard = document.querySelector(".buttonArea");
+  if (soundboard) {
+    const soundboardWidth = soundboard.offsetWidth;
 
-        const counter = document.querySelector('.counter');
-        if (counter) {
-            const counterWidth = counter.offsetWidth;
-            const counterMargin = `calc((${soundboardWidth}px - ${counterWidth * 8}px) / 16)`;
-            root.style.setProperty('--counter-margin', counterMargin);
-            root.style.setProperty('--metronome-width', `${soundboardWidth}px`);
-        }
+    const counter = document.querySelector(".counter");
+    if (counter) {
+      const counterWidth = counter.offsetWidth;
+      const counterMargin = `calc((${soundboardWidth}px - ${counterWidth * 8}px) / 16)`;
+      root.style.setProperty("--counter-margin", counterMargin);
+      root.style.setProperty("--metronome-width", `${soundboardWidth}px`);
     }
+  }
 };
 
 // Update sizes on window resize
-window.addEventListener('resize', updateSizes);
-window.addEventListener('fullscreenchange', updateSizes);
+window.addEventListener("resize", updateSizes);
+window.addEventListener("fullscreenchange", updateSizes);
 
 // Initialize sizes on page load
-window.addEventListener('load', () => {
-    initializeAudioContext();
-    updateSizes();
+window.addEventListener("load", () => {
+  initializeAudioContext();
+  updateSizes();
 });
